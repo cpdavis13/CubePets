@@ -221,7 +221,7 @@ void Comms::handleIncomingPacket(int sideIdx, uint8_t* data, size_t len) {
                         _battle->addCubeWithPath(senderMac, directions);
                     }
 
-                    //I added this...
+                    //I added this... TEST
                     if (_myMac == _hostMac && _battle) {
                         _battle->createCharacter(senderMac, 0);
                     }

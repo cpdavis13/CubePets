@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Character.h"  // your character definitions
+#include "Character.h"  
 #include "TFT_eSPI.h"
 
 using CharacterPtr = std::shared_ptr<Character>;
 using CharacterList = std::vector<CharacterPtr>;
 
-class Map;  // forward declare
+class Map;  //Forward declaration
 
 class Display {
 public:

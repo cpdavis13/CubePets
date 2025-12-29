@@ -31,7 +31,7 @@ struct Neighbor {
     uint32_t lastHeartbeat;
 };
 
-class Battle; // Forward declaration
+class Battle; //Forward declaration
 
 class Comms {
 public:
@@ -43,7 +43,7 @@ public:
     uint32_t getHostMac() const { return _hostMac; }
     uint32_t getMyMac() const { return _myMac; }
 
-    // Sends a packet with tag and payload to all neighbors
+    //Sends a packet with tag and payload to all neighbors
     void sendPacketToNeighbors(uint8_t tag, const uint8_t* payload, size_t len);
 
 private:
@@ -60,13 +60,15 @@ private:
 
     uint32_t _lastSendTime;
 
-    uint16_t localSeqNum;  // Sequence number to uniquely identify outgoing packets
+    //Sequence number to uniquely identify outgoing packets
+    uint16_t localSeqNum;  
 
     std::vector<uint8_t> rxBuffers[NUM_SIDES];
 
-    std::deque<RecentPacket> recentPackets; // Keep track of recently seen packets for duplicate suppression
+    //Keep track of recently seen packets for duplicate suppression
+    std::deque<RecentPacket> recentPackets; 
 
-    // Internal methods
+    //Internal methods
     void handleIncomingPacket(int sideIdx, uint8_t* data, size_t len);
     void forwardPacket(int incomingSide, uint8_t* data, size_t len);
     void sendHeartbeat();
@@ -77,7 +79,7 @@ private:
     // Check if we have already processed a packet with this sender MAC and sequence number
     bool isDuplicatePacket(uint32_t senderMac, uint16_t seqNum);
 
-    // Add a packet to the recentPackets buffer
+    //Add a packet to the recentPackets buffer
     void addRecentPacket(uint32_t senderMac, uint16_t seqNum);
 };
 

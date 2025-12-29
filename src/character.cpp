@@ -1,4 +1,3 @@
-// Updated character.cpp with full autonomous battling AI state machine
 #include "character.h"
 #include "battle.h"
 #include <cstdlib>      // rand(), srand()

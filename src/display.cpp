@@ -1,5 +1,5 @@
 #include "display.h"
-#include "battle.h"  // include full definition here
+#include "battle.h"  
 #include <algorithm>
 
 Display::Display(Map* map, TFT_eSPI* tft, uint16_t width, uint16_t height)

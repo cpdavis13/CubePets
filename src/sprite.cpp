@@ -11,7 +11,7 @@ Sprite::Sprite(TFT_eSPI* tft)
     _currentAnim(nullptr),
     _currentFrame(0)
 {
-  _sheetWidth = _frameWidth * _totalFrames; // Default to horizontal sheet layout
+  _sheetWidth = _frameWidth * _totalFrames; 
 }
 
 void Sprite::load(int id) {

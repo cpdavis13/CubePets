@@ -99,7 +99,7 @@ bool Map::isCharacterInCubeBounds(uint32_t cubeMac, int16_t charX, int16_t charY
            (charY >= cube.y && charY < cube.y + cubeHeight);
 }
 
-// Returns pointer to Cube info if found, otherwise nullptr
+//Returns pointer to Cube info if found, otherwise nullptr
 const Cube* Map::getCubeInfo(uint32_t mac) const {
     auto it = cubes.find(mac);
     if (it != cubes.end()) {

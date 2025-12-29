@@ -1,3 +1,8 @@
+// Battle.cpp
+//
+// The central authority for character lifecycle, map integration, networking, and rendering.
+
+
 #include "battle.h"
 #include "sprite.h"
 #include "display.h"
@@ -13,6 +18,7 @@ Battle::~Battle() {
     delete display;
 }
 
+// Initializes networking, local identity, display, RNG and local character
 void Battle::init() {
     comm.begin(115200);
     myMac = comm.getMyMac();
@@ -20,7 +26,7 @@ void Battle::init() {
     map.addCube(myMac, 0, -1);
 
     uint32_t seed = esp_random();
-    srand(seed);  // Seed your PRNG with high-quality entropy
+    srand(seed);  
 
     CharacterPtr newCharacter(new Character(myMac, 0, battle_tft, &map, this));
     addCharacter(newCharacter);
@@ -29,14 +35,15 @@ void Battle::init() {
     display->setCharacters(characters);
 }
 
-
 void Battle::update() {
     comm.update();
 
+    //Update locally if not connected to a network
     if (comm.getRole() == ROLE_UNASSIGNED) {
         updateCharacters();
     }
 
+    //Update and broadcast to connected cubes
     if (comm.getRole() == ROLE_HOST) {
         updateCharacters();
         sendCommands();
@@ -68,6 +75,13 @@ void Battle::updateCharacters() {
 }
 
 void Battle::sendCommands() {
+    // Packet format (8 bytes per character):
+    // [0–3] MAC address
+    // [4]   Character ID
+    // [5]   X position
+    // [6]   Y position
+    // [7]   Sprite frame
+
     std::vector<uint8_t> payload;
     for (const auto& character : characters) {
         uint32_t mac = character->getMac();
@@ -157,8 +171,8 @@ Character* Battle::findNearestEnemy(Character* seeker) {
 
     for (const auto& characterPtr : characters) {
         Character* candidate = characterPtr.get();
-        if (candidate == seeker) continue;        // Skip self
-        if (!candidate->isAlive()) continue;         // Skip dead
+        if (candidate == seeker) continue;        
+        if (!candidate->isAlive()) continue;        
 
         float dx = candidate->getX() - seeker->getX();
         float dy = candidate->getY() - seeker->getY();

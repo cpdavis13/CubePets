@@ -47,15 +47,15 @@ void Comms::update() {
                 if (rxBuffers[i].size() < expectedLen)
                     break;
 
-                // Intercept command packets to buffer only the latest
+                //Intercept command packets to buffer only the latest
                 if (tag == PACKET_COMMAND) {
-                    // Replace any existing buffered command packet for this side
+                    //Replace any existing buffered command packet for this side
                     latestCommandPackets[i].assign(rxBuffers[i].begin(), rxBuffers[i].begin() + expectedLen);
                     hasPendingCommand[i] = true;
-                    // Remove from rx buffer to avoid double processing
+                    //Remove from rx buffer to avoid double processing
                     rxBuffers[i].erase(rxBuffers[i].begin(), rxBuffers[i].begin() + expectedLen);
                 } else {
-                    // For other tags, process immediately
+                    //For other tags, process immediately
                     Serial.printf("[RX] Packet from side %d | Tag: %u | PayloadLen: %u | TotalLen: %u\n", i, tag, payloadLen, expectedLen);
                     handleIncomingPacket(i, rxBuffers[i].data(), expectedLen);
                     rxBuffers[i].erase(rxBuffers[i].begin(), rxBuffers[i].begin() + expectedLen);
@@ -79,7 +79,7 @@ void Comms::update() {
         }
     }
 
-    // Process one latest command packet per side per update cycle
+    //Process one latest command packet per side per update cycle
     for (int i = 0; i < NUM_SIDES; ++i) {
         if (hasPendingCommand[i]) {
             Serial.printf("[COMMAND] Processing latest buffered command packet from side %d\n", i);
@@ -97,7 +97,7 @@ void Comms::update() {
     }
 }
 
-// Helper: pack a vector of 2-bit directions into bytes
+//Helper: pack a vector of 2-bit directions into bytes
 static void packDirections(const std::vector<uint8_t>& directions, std::vector<uint8_t>& outPacked) {
     outPacked.clear();
     uint8_t currentByte = 0;
@@ -117,7 +117,7 @@ static void packDirections(const std::vector<uint8_t>& directions, std::vector<u
     }
 }
 
-// Helper: unpack 2-bit directions from bytes
+//Helper: unpack 2-bit directions from bytes
 static void unpackDirections(const uint8_t* packed, size_t length, std::vector<uint8_t>& outDirections) {
     outDirections.clear();
     for (size_t i = 0; i < length; ++i) {
@@ -201,32 +201,32 @@ void Comms::handleIncomingPacket(int sideIdx, uint8_t* data, size_t len) {
                 reevaluateHost();
 
                 if (payloadLen >= 5) {
-                    // Parse Host MAC
+                    //Parse Host MAC
                     uint32_t hostMacInPayload = (payload[0] << 24) | (payload[1] << 16) | (payload[2] << 8) | payload[3];
                     uint8_t pathLen = payload[4];
                     size_t packedLen = payloadLen - 5;
 
-                    // Unpack path directions
+                    //Unpack path directions
                     std::vector<uint8_t> directions;
                     unpackDirections(payload + 5, packedLen, directions);
                     if (directions.size() > pathLen) {
                         directions.resize(pathLen);
                     }
 
-                    // Add this cube’s side as the next step in the path
+                    //Add this cube’s side as the next step in the path
                     directions.push_back(sideIdx);
 
-                    // Update sender’s path in map
+                    //Update sender’s path in map
                     if (_battle) {
                         _battle->addCubeWithPath(senderMac, directions);
                     }
 
-                    //I added this... TEST
+                    //Create a character
                     if (_myMac == _hostMac && _battle) {
                         _battle->createCharacter(senderMac, 0);
                     }
 
-                    // If I’m a client, and I just learned my full path to host, store my own path
+                    //If this is client, and this learned full path to host, store path
                     if (_myMac != _hostMac && _battle) {
                         std::vector<uint8_t> myPath = directions;
                         _battle->addCubeWithPath(_myMac, myPath);
@@ -271,11 +271,11 @@ void Comms::forwardPacket(int incomingSide, uint8_t* data, size_t len) {
 void Comms::sendHeartbeat() {
     std::vector<uint8_t> path;
 
-    // For host, path is empty
+    //For host, path is empty
     if (_role == ROLE_HOST) {
         path.clear();
     } else {
-        // For clients, get their path from _battle (you'll maintain it there)
+        //For clients, get their path from _battle 
         path = _battle->getPathFromHost();
     }
 
@@ -283,16 +283,16 @@ void Comms::sendHeartbeat() {
     packDirections(path, packedPath);
 
     std::vector<uint8_t> payload;
-    // Append 4 bytes of Host MAC
+    //Append 4 bytes of Host MAC
     payload.push_back((_hostMac >> 24) & 0xFF);
     payload.push_back((_hostMac >> 16) & 0xFF);
     payload.push_back((_hostMac >> 8) & 0xFF);
     payload.push_back(_hostMac & 0xFF);
 
-    // Append path length (in hops)
+    //Append path length 
     payload.push_back((uint8_t)path.size());
 
-    // Append packed path bytes
+    //Append packed path bytes
     payload.insert(payload.end(), packedPath.begin(), packedPath.end());
 
     sendPacketToNeighbors(PACKET_HEARTBEAT, payload.data(), payload.size());

@@ -5,7 +5,7 @@ A real-time multiplayer embedded game built on ESP32 microcontrollers using C++.
 
 ## Overview
 
-CubePets is a keychain-sized multiplayer embedded game system built on ESP32 microcontrollers. Multiple devices communicate over wired UART and GPIO connections to synchronize game state and player actions in real time. The system is designed to support dynamic connection and disconnection in arbitrary configurations, supporting immediate play and flexible network topologies.
+CubePets is a keychain-sized multiplayer embedded game system built on ESP32 microcontrollers. Multiple devices communicate over wired UART and GPIO connections to synchronize game state and player actions in real time. Friends can immediately connect their devices and watch their characters battle across multiple screens. The system is designed to support dynamic connection and disconnection in arbitrary configurations, enabling immediate play and flexible network topologies.
 
 This project explores timing-sensitive embedded design, finite state machines, and reliable synchronization under the hardware, latency, and resource constraints typical of microcontroller-based systems.
 
